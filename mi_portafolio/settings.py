@@ -69,11 +69,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Configuración de WhiteNoise para archivos estáticos
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Solo agregar STATICFILES_DIRS si la carpeta static existe y tiene archivos
+import os
+if os.path.exists(BASE_DIR / "static"):
+    STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
@@ -109,3 +110,6 @@ if 'RAILWAY_ENVIRONMENT' in os.environ or 'DATABASE_URL' in os.environ:
         'https://*.railway.app',
         'https://*.up.railway.app',
     ]
+    
+    # Configuración de archivos estáticos para producción
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
