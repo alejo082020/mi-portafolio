@@ -1,1 +1,1 @@
-web: python manage.py collectstatic --noinput && gunicorn mi_portafolio.wsgi:application --bind 0.0.0.0:$PORT
+web: python manage.py migrate --noinput && python manage.py collectstatic --noinput && python crear_superusuario.py && python agregar_datos_basicos.py && python agregar_banners.py && gunicorn mi_portafolio.wsgi:application --bind 0.0.0.0:$PORT
