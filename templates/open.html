@@ -136,7 +136,7 @@
     {% for receta in recetas %}
     <div class="recipe-card">
       {% if receta.imagen %}
-        <img src="{{ receta.imagen.url }}" alt="{{ receta.titulo }}" class="recipe-image">
+        <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}" class="recipe-image">
       {% else %}
         <div class="recipe-image-placeholder">
           🍳

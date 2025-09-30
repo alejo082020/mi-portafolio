@@ -9,7 +9,7 @@ class Perfil(models.Model):
     nombre_completo = models.CharField(max_length=200)
     titulo_profesional = models.CharField(max_length=200)
     descripcion = models.TextField()
-    foto = models.ImageField(upload_to="perfil/", blank=True, null=True)
+    foto = models.URLField(blank=True, null=True, help_text="URL de la imagen de perfil")
     email = models.EmailField()
     telefono = models.CharField(max_length=20, blank=True)
     linkedin = models.URLField(blank=True)
@@ -37,7 +37,7 @@ class Proyecto(models.Model):
     """Proyectos del portafolio"""
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField()
-    imagen = models.ImageField(upload_to="proyectos/", blank=True, null=True)
+    imagen = models.URLField(blank=True, null=True, help_text="URL de la imagen del proyecto")
     url = models.URLField(blank=True)
     tecnologias = models.CharField(max_length=200, help_text="Separadas por comas")
     fecha = models.DateField()

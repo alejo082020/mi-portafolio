@@ -62,7 +62,7 @@
     <div class="row align-items-center">
       <div class="col-md-4 text-center">
         {% if perfil and perfil.foto %}
-          <img src="{{ perfil.foto.url }}" class="profile-img" alt="{{ perfil.nombre_completo }}">
+          <img src="{{ perfil.foto }}" class="profile-img" alt="{{ perfil.nombre_completo }}">
         {% else %}
           <img src="{% static 'images/default-avatar.png' %}" class="profile-img" alt="Foto de perfil">
         {% endif %}
@@ -116,7 +116,7 @@
       <div class="col-md-4 mb-4">
         <div class="card project-card">
           {% if proyecto.imagen %}
-            <img src="{{ proyecto.imagen.url }}" class="card-img-top" alt="{{ proyecto.titulo }}">
+            <img src="{{ proyecto.imagen }}" class="card-img-top" alt="{{ proyecto.titulo }}">
           {% endif %}
           <div class="card-body">
             <h5 class="card-title">{{ proyecto.titulo }}</h5>
