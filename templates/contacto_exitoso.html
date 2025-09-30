@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Mensaje Enviado - Mi Portafolio{% endblock %}
+
+{% block head %}
+<style>
+  .success-container {
+    max-width: 600px;
+    margin: 4rem auto;
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background: #10b981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    animation: scaleIn 0.5s ease-out;
+  }
+  
+  .success-icon svg {
+    width: 50px;
+    height: 50px;
+    color: white;
+  }
+  
+  @keyframes scaleIn {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  
+  .success-title {
+    color: #10b981;
+    margin-bottom: 1rem;
+  }
+  
+  .success-message {
+    color: #6b7280;
+    margin-bottom: 2rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+  <div class="success-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+    </svg>
+  </div>
+  
+  <h1 class="success-title">¡Mensaje Enviado!</h1>
+  <p class="success-message">
+    Gracias por contactarme. He recibido tu mensaje y te responderé lo antes posible.
+  </p>
+  
+  <div class="d-flex gap-2 justify-content-center">
+    <a href="{% url 'home' %}" class="btn btn-primary">Volver al Inicio</a>
+    <a href="{% url 'contactame' %}" class="btn btn-outline-primary">Enviar Otro Mensaje</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Marcar conversión en Google Analytics
+if (typeof gtag !== 'undefined') {
+  gtag('event', 'form_success', {
+    'form_name': 'contacto'
+  });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %}Contáctame - Mi Portafolio{% endblock %}
+
+{% block head %}
+<style>
+  .contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  .error-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: none;
+  }
+  
+  .error-message.show {
+    display: block;
+  }
+  
+  .form-control.is-invalid {
+    border-color: #dc2626;
+  }
+  
+  .form-control.is-valid {
+    border-color: #10b981;
+  }
+  
+  .contact-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 0.75rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-header">
+  <h1>Contáctame</h1>
+  <p class="lead text-muted">¿Tienes un proyecto en mente? Hablemos</p>
+</div>
+
+<div class="contact-form">
+  <form method="post" id="contactForm" novalidate action="{% url 'contactame' %}">
+    {% csrf_token %}
+    
+    <!-- Nombre -->
+    <div class="mb-3">
+      <label for="{{ form.nombre.id_for_label }}" class="form-label">
+        Nombre completo <span class="text-danger">*</span>
+      </label>
+      {{ form.nombre }}
+      <div class="error-message" id="error-nombre"></div>
+      {% if form.nombre.errors %}
+        <div class="text-danger small">{{ form.nombre.errors.0 }}</div>
+      {% endif %}
+    </div>
+    
+    <!-- Correo -->
+    <div class="mb-3">
+      <label for="{{ form.correo.id_for_label }}" class="form-label">
+        Correo electrónico <span class="text-danger">*</span>
+      </label>
+      {{ form.correo }}
+      <div class="error-message" id="error-correo"></div>
+      {% if form.correo.errors %}
+        <div class="text-danger small">{{ form.correo.errors.0 }}</div>
+      {% endif %}
+    </div>
+    
+    <!-- Teléfono -->
+    <div class="mb-3">
+      <label for="{{ form.telefono.id_for_label }}" class="form-label">
+        Teléfono (opcional)
+      </label>
+      {{ form.telefono }}
+      <div class="error-message" id="error-telefono"></div>
+      {% if form.telefono.errors %}
+        <div class="text-danger small">{{ form.telefono.errors.0 }}</div>
+      {% endif %}
+    </div>
+    
+    <!-- Asunto -->
+    <div class="mb-3">
+      <label for="{{ form.asunto.id_for_label }}" class="form-label">
+        Asunto <span class="text-danger">*</span>
+      </label>
+      {{ form.asunto }}
+      <div class="error-message" id="error-asunto"></div>
+      {% if form.asunto.errors %}
+        <div class="text-danger small">{{ form.asunto.errors.0 }}</div>
+      {% endif %}
+    </div>
+    
+    <!-- Mensaje -->
+    <div class="mb-3">
+      <label for="{{ form.mensaje.id_for_label }}" class="form-label">
+        Mensaje <span class="text-danger">*</span>
+      </label>
+      {{ form.mensaje }}
+      <div class="error-message" id="error-mensaje"></div>
+      {% if form.mensaje.errors %}
+        <div class="text-danger small">{{ form.mensaje.errors.0 }}</div>
+      {% endif %}
+    </div>
+    
+    <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">
+      Enviar Mensaje
+    </button>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Validación JavaScript del formulario
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('contactForm');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  // Función para validar email
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+  
+  // Función para validar teléfono (opcional pero si se llena debe ser válido)
+  function isValidPhone(phone) {
+    if (!phone) return true; // Es opcional
+    const phoneRegex = /^[\d\s\+\-\(\)]+$/;
+    return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 7;
+  }
+  
+  // Función para mostrar error
+  function showError(fieldName, message) {
+    const errorDiv = document.getElementById(`error-${fieldName}`);
+    const input = document.getElementById(`id_${fieldName}`);
+    
+    errorDiv.textContent = message;
+    errorDiv.classList.add('show');
+    input.classList.add('is-invalid');
+    input.classList.remove('is-valid');
+  }
+  
+  // Función para limpiar error
+  function clearError(fieldName) {
+    const errorDiv = document.getElementById(`error-${fieldName}`);
+    const input = document.getElementById(`id_${fieldName}`);
+    
+    errorDiv.classList.remove('show');
+    input.classList.remove('is-invalid');
+    input.classList.add('is-valid');
+  }
+  
+  // Validación en tiempo real
+  const fields = ['nombre', 'correo', 'telefono', 'asunto', 'mensaje'];
+  
+  fields.forEach(fieldName => {
+    const input = document.getElementById(`id_${fieldName}`);
+    if (input) {
+      input.addEventListener('blur', function() {
+        validateField(fieldName, this.value);
+      });
+      
+      input.addEventListener('input', function() {
+        if (this.classList.contains('is-invalid')) {
+          validateField(fieldName, this.value);
+        }
+      });
+    }
+  });
+  
+  // Función de validación por campo
+  function validateField(fieldName, value) {
+    let isValid = true;
+    let errorMessage = '';
+    
+    switch(fieldName) {
+      case 'nombre':
+        if (!value.trim()) {
+          errorMessage = 'El nombre es obligatorio';
+          isValid = false;
+        } else if (value.trim().length < 3) {
+          errorMessage = 'El nombre debe tener al menos 3 caracteres';
+          isValid = false;
+        } else if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
+          errorMessage = 'El nombre solo puede contener letras';
+          isValid = false;
+        }
+        break;
+        
+      case 'correo':
+        if (!value.trim()) {
+          errorMessage = 'El correo electrónico es obligatorio';
+          isValid = false;
+        } else if (!isValidEmail(value)) {
+          errorMessage = 'Ingresa un correo electrónico válido';
+          isValid = false;
+        }
+        break;
+        
+      case 'telefono':
+        if (value && !isValidPhone(value)) {
+          errorMessage = 'Ingresa un número de teléfono válido';
+          isValid = false;
+        }
+        break;
+        
+      case 'asunto':
+        if (!value.trim()) {
+          errorMessage = 'El asunto es obligatorio';
+          isValid = false;
+        } else if (value.trim().length < 3) {
+          errorMessage = 'El asunto debe tener al menos 3 caracteres';
+          isValid = false;
+        }
+        break;
+        
+      case 'mensaje':
+        if (!value.trim()) {
+          errorMessage = 'El mensaje es obligatorio';
+          isValid = false;
+        } else if (value.trim().length < 10) {
+          errorMessage = 'El mensaje debe tener al menos 10 caracteres';
+          isValid = false;
+        }
+        break;
+    }
+    
+    if (isValid) {
+      clearError(fieldName);
+    } else {
+      showError(fieldName, errorMessage);
+    }
+    
+    return isValid;
+  }
+  
+  // Validación al enviar el formulario
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    let isFormValid = true;
+    
+    // Validar todos los campos
+    const nombre = document.getElementById('id_nombre').value;
+    const correo = document.getElementById('id_correo').value;
+    const telefono = document.getElementById('id_telefono').value;
+    const asunto = document.getElementById('id_asunto').value;
+    const mensaje = document.getElementById('id_mensaje').value;
+    
+    if (!validateField('nombre', nombre)) isFormValid = false;
+    if (!validateField('correo', correo)) isFormValid = false;
+    if (!validateField('telefono', telefono)) isFormValid = false;
+    if (!validateField('asunto', asunto)) isFormValid = false;
+    if (!validateField('mensaje', mensaje)) isFormValid = false;
+    
+    // Si todo es válido, enviar el formulario
+    if (isFormValid) {
+      // Deshabilitar botón para evitar doble envío
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando...';
+      
+      // Marcar evento en Google Analytics
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submit', {
+          'form_name': 'contacto'
+        });
+      }
+      
+      // Enviar formulario
+      form.submit();
+    } else {
+      // Scroll al primer error
+      const firstError = document.querySelector('.is-invalid');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstError.focus();
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

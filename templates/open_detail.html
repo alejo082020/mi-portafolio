@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}{{ receta.titulo }} - Mi Portafolio{% endblock %}
+
+{% block head %}
+<style>
+  .detail-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+  }
+  
+  .detail-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .recipe-detail-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 2rem;
+  }
+  
+  .recipe-detail-image-placeholder {
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 6rem;
+    margin-bottom: 2rem;
+  }
+  
+  .recipe-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f9fafb;
+    border-radius: 10px;
+  }
+  
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .meta-icon {
+    font-size: 1.5rem;
+  }
+  
+  .recipe-keywords-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .keyword-tag-detail {
+    background: #e0e7ff;
+    color: #4338ca;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  
+  .recipe-description {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: #374151;
+    margin-bottom: 2rem;
+  }
+  
+  .back-btn {
+    margin-bottom: 2rem;
+  }
+  
+  .share-section {
+    text-align: center;
+    padding: 2rem;
+    background: #f9fafb;
+    border-radius: 10px;
+    margin-top: 3rem;
+  }
+  
+  .share-btn {
+    margin: 0.5rem;
+    padding: 0.75rem 1.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+  <a href="{% url 'open_list' %}" class="btn btn-outline-primary back-btn">
+    ← Volver a Recetas
+  </a>
+  
+  <div class="detail-header">
+    <div class="container">
+      <h1 class="display-4 fw-bold">{{ receta.titulo }}</h1>
+      <p class="lead">{{ receta.resumen }}</p>
+    </div>
+  </div>
+  
+  {% if receta.imagen %}
+    <img src="{{ receta.imagen.url }}" alt="{{ receta.titulo }}" class="recipe-detail-image">
+  {% else %}
+    <div class="recipe-detail-image-placeholder">
+      🍳
+    </div>
+  {% endif %}
+  
+  <div class="recipe-meta">
+    <div class="meta-item">
+      <span class="meta-icon">📅</span>
+      <div>
+        <small class="text-muted d-block">Fecha de publicación</small>
+        <strong>{{ receta.fecha_creacion|date:"d/m/Y" }}</strong>
+      </div>
+    </div>
+    <div class="meta-item">
+      <span class="meta-icon">🏷️</span>
+      <div>
+        <small class="text-muted d-block">Categoría</small>
+        <strong>Receta</strong>
+      </div>
+    </div>
+  </div>
+  
+  {% if receta.palabras_clave %}
+  <div class="recipe-keywords-detail">
+    <strong class="me-2">Etiquetas:</strong>
+    {% for keyword in receta.palabras_clave|split:"," %}
+      <span class="keyword-tag-detail">{{ keyword|trim }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+  <div class="recipe-description">
+    <h3 class="mb-3">Descripción</h3>
+    {{ receta.descripcion|linebreaks }}
+  </div>
+  
+  <div class="share-section">
+    <h4>¿Te gustó esta receta?</h4>
+    <p class="text-muted">Compártela con tus amigos</p>
+    <button class="btn btn-primary share-btn" onclick="compartirReceta()">
+      📤 Compartir
+    </button>
+    <a href="{% url 'contactame' %}" class="btn btn-outline-primary share-btn">
+      ✉️ Contáctame
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Marcar visualización en Google Analytics
+if (typeof gtag !== 'undefined') {
+  gtag('event', 'recipe_detail_view', {
+    'recipe_name': '{{ receta.titulo|escapejs }}',
+    'recipe_id': '{{ receta.pk }}'
+  });
+}
+
+// Función para compartir
+function compartirReceta() {
+  if (navigator.share) {
+    navigator.share({
+      title: '{{ receta.titulo|escapejs }}',
+      text: '{{ receta.resumen|escapejs }}',
+      url: window.location.href
+    }).then(() => {
+      console.log('Compartido exitosamente');
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'recipe_share', {
+          'recipe_name': '{{ receta.titulo|escapejs }}'
+        });
+      }
+    }).catch((error) => {
+      console.log('Error al compartir:', error);
+    });
+  } else {
+    // Fallback: copiar URL al portapapeles
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      alert('¡Enlace copiado al portapapeles!');
+    });
+  }
+}
+</script>
+{% endblock %}

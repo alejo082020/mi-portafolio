@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Test Google Analytics{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2>🧪 Prueba de Google Analytics</h2>
+    </div>
+    <div class="card-body">
+      <h4>Estado de Google Analytics:</h4>
+      <div id="status" class="alert alert-info">
+        Verificando...
+      </div>
+
+      <h4 class="mt-4">Enviar Eventos de Prueba:</h4>
+      <button class="btn btn-primary mb-2" onclick="sendTestEvent('test_button_click')">
+        🔵 Enviar Evento: test_button_click
+      </button>
+      <button class="btn btn-success mb-2" onclick="sendTestEvent('test_success')">
+        ✅ Enviar Evento: test_success
+      </button>
+      <button class="btn btn-warning mb-2" onclick="sendTestEvent('test_warning')">
+        ⚠️ Enviar Evento: test_warning
+      </button>
+
+      <h4 class="mt-4">Log de Eventos:</h4>
+      <div id="log" class="border p-3 bg-light" style="height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+        <div class="text-muted">Los eventos aparecerán aquí...</div>
+      </div>
+
+      <div class="mt-4">
+        <h5>📊 Información:</h5>
+        <ul>
+          <li><strong>ID de Medición:</strong> G-HXLEPZ6Z17</li>
+          <li><strong>URL Actual:</strong> <span id="currentUrl"></span></li>
+          <li><strong>User Agent:</strong> <span id="userAgent" style="font-size: 11px;"></span></li>
+        </ul>
+      </div>
+
+      <div class="alert alert-warning mt-3">
+        <strong>⚠️ Nota:</strong> Los eventos aparecen en Google Analytics "Tiempo Real" en 10-30 segundos.
+        <br>Si no aparecen:
+        <ul class="mb-0 mt-2">
+          <li>Desactiva bloqueadores de anuncios</li>
+          <li>Usa modo incógnito</li>
+          <li>Verifica que el ID de medición sea correcto en Google Analytics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Verificar que gtag está cargado
+window.addEventListener('DOMContentLoaded', function() {
+  const statusDiv = document.getElementById('status');
+  const logDiv = document.getElementById('log');
+  
+  // Mostrar info
+  document.getElementById('currentUrl').textContent = window.location.href;
+  document.getElementById('userAgent').textContent = navigator.userAgent;
+  
+  function addLog(message, type = 'info') {
+    const time = new Date().toLocaleTimeString();
+    const colors = {
+      'success': 'text-success',
+      'error': 'text-danger',
+      'info': 'text-primary',
+      'warning': 'text-warning'
+    };
+    logDiv.innerHTML += `<div class="${colors[type]}">[${time}] ${message}</div>`;
+    logDiv.scrollTop = logDiv.scrollHeight;
+  }
+  
+  // Verificar gtag
+  if (typeof gtag === 'function') {
+    statusDiv.className = 'alert alert-success';
+    statusDiv.innerHTML = '✅ <strong>Google Analytics está cargado correctamente</strong><br>Función gtag() disponible';
+    addLog('✅ gtag() está disponible', 'success');
+    addLog('✅ dataLayer inicializado: ' + (window.dataLayer ? 'Sí' : 'No'), 'success');
+    
+    // Enviar evento de carga de página
+    gtag('event', 'test_page_view', {
+      'page_title': 'Test Analytics Page',
+      'page_location': window.location.href
+    });
+    addLog('📊 Evento automático enviado: test_page_view', 'info');
+    
+  } else {
+    statusDiv.className = 'alert alert-danger';
+    statusDiv.innerHTML = '❌ <strong>Error:</strong> Google Analytics NO está cargado<br>Función gtag() no disponible';
+    addLog('❌ gtag() NO está disponible', 'error');
+  }
+  
+  // Verificar dataLayer
+  if (window.dataLayer) {
+    addLog('📦 dataLayer contiene ' + window.dataLayer.length + ' elementos', 'info');
+    console.log('dataLayer:', window.dataLayer);
+  }
+});
+
+// Función para enviar eventos de prueba
+function sendTestEvent(eventName) {
+  const logDiv = document.getElementById('log');
+  
+  if (typeof gtag !== 'function') {
+    alert('❌ gtag() no está disponible. Recarga la página.');
+    return;
+  }
+  
+  try {
+    gtag('event', eventName, {
+      'event_category': 'test',
+      'event_label': 'manual_test',
+      'value': Math.floor(Math.random() * 100)
+    });
+    
+    const time = new Date().toLocaleTimeString();
+    logDiv.innerHTML += `<div class="text-success">[${time}] ✅ Evento enviado: <strong>${eventName}</strong></div>`;
+    logDiv.scrollTop = logDiv.scrollHeight;
+    
+    console.log('Evento enviado:', eventName);
+    
+    // Mostrar alerta de éxito
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+    alert.style.zIndex = '9999';
+    alert.innerHTML = `
+      ✅ Evento <strong>${eventName}</strong> enviado a Google Analytics
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alert);
+    setTimeout(() => alert.remove(), 3000);
+    
+  } catch (error) {
+    const time = new Date().toLocaleTimeString();
+    logDiv.innerHTML += `<div class="text-danger">[${time}] ❌ Error: ${error.message}</div>`;
+    logDiv.scrollTop = logDiv.scrollHeight;
+    console.error('Error al enviar evento:', error);
+  }
+}
+
+// Log adicional en consola
+console.log('%c🧪 Página de Test de Google Analytics', 'font-size: 20px; color: blue; font-weight: bold;');
+console.log('ID de Medición: G-HXLEPZ6Z17');
+console.log('gtag disponible:', typeof gtag === 'function');
+console.log('dataLayer:', window.dataLayer);
+</script>
+{% endblock %}
