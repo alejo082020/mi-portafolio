@@ -8,4 +8,4 @@ cmds = ["pip install -r requirements.txt"]
 cmds = ["python manage.py collectstatic --noinput --clear"]
 
 [start]
-cmd = "python manage.py migrate && gunicorn mi_portafolio.wsgi:application --bind 0.0.0.0:$PORT --log-file -"
+cmd = "python manage.py migrate --noinput && python crear_superusuario.py && python agregar_datos_basicos.py && python agregar_banners.py && gunicorn mi_portafolio.wsgi:application --bind 0.0.0.0:$PORT --log-file -"
