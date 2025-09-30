@@ -79,9 +79,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuración para Railway/Producción
 import os
-import dj_database_url
 
 if 'RAILWAY_ENVIRONMENT' in os.environ or 'DATABASE_URL' in os.environ:
+    import dj_database_url
+    
     DEBUG = False
     ALLOWED_HOSTS = ['.railway.app', '.up.railway.app', 'localhost', '127.0.0.1']
     
