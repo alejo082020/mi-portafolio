@@ -72,6 +72,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Configuración de WhiteNoise para archivos estáticos
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -84,7 +87,13 @@ if 'RAILWAY_ENVIRONMENT' in os.environ or 'DATABASE_URL' in os.environ:
     import dj_database_url
     
     DEBUG = False
-    ALLOWED_HOSTS = ['.railway.app', '.up.railway.app', 'localhost', '127.0.0.1']
+    ALLOWED_HOSTS = [
+        '.railway.app', 
+        '.up.railway.app', 
+        'alejandro-alvarez.up.railway.app',
+        'localhost', 
+        '127.0.0.1'
+    ]
     
     # Base de datos PostgreSQL
     DATABASES = {
