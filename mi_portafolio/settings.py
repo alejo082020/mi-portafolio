@@ -89,9 +89,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Configuración para Railway/Producción
 
-if 'RAILWAY_ENVIRONMENT' in os.environ or 'DATABASE_URL' in os.environ:
-    import dj_database_url
-    
+if 'RAILWAY_ENVIRONMENT' in os.environ:
     DEBUG = False
     ALLOWED_HOSTS = [
         '.railway.app', 
@@ -101,14 +99,24 @@ if 'RAILWAY_ENVIRONMENT' in os.environ or 'DATABASE_URL' in os.environ:
         '127.0.0.1'
     ]
     
-    # Base de datos PostgreSQL
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
+    # Base de datos PostgreSQL si existe DATABASE_URL, sino SQLite
+    if 'DATABASE_URL' in os.environ:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=os.environ.get('DATABASE_URL'),
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
+        }
+    # Si no hay DATABASE_URL, usar SQLite (no recomendado para producción)
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
     
     # Seguridad
     CSRF_TRUSTED_ORIGINS = [
