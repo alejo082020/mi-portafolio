@@ -1,11 +1,10 @@
 from pathlib import Path
-import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-$hq0xs@@#!!wkl17m^jz+=kat7_m9vg4_nuuv_&223z0@l1k9x'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [".railway.app", "localhost", "127.0.0.1"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -21,7 +20,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 aquí
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -35,7 +34,7 @@ ROOT_URLCONF = 'mi_portafolio.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  # 👈 mejor poner carpeta global templates
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -49,6 +48,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mi_portafolio.wsgi.application'
 
+# Configuración SQLite
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
