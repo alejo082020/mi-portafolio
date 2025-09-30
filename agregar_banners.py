@@ -14,13 +14,13 @@ from core.models import Banner
 print("🎯 Agregando banners con parámetros UTM...")
 
 # Banner 1
-banner1, created1 = Banner.objects.get_or_create(
+banner1, created1 = Banner.objects.update_or_create(
     titulo='NICOLAS PARRA',
     defaults={
-        'url': 'https://cv-nicolas-torres.up.railway.app?utm_source=friend&utm_medium=referral&utm_campaign=friend_referral&utm_id=Friend+Referral ',
-        'utm_source': 'mi_home',
-        'utm_medium': 'banner',
-        'utm_campaign': 'companero1',
+        'url': 'https://cv-nicolas-torres.up.railway.app',
+        'utm_source': 'friend',
+        'utm_medium': 'referral',
+        'utm_campaign': 'friend_referral',
         'activo': True,
         'orden': 1
     }
