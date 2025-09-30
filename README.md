@@ -1,4 +1,8 @@
-# 🎓 Proyecto Final - Ingeniería Web
+# 🎓 Portafolio Personal - Proyecto Final Ingeniería Web
+
+**Autor:** Edin Alejandro Alvarez Laverde  
+**Repositorio:** https://github.com/alejo082020/mi-portafolio  
+**Curso:** Ingeniería Web
 
 ## 📋 Descripción del Proyecto
 
