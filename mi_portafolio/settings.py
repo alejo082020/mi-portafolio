@@ -81,8 +81,13 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# CSRF para desarrollo local
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+]
+
 # Configuración para Railway/Producción
-import os
 
 if 'RAILWAY_ENVIRONMENT' in os.environ or 'DATABASE_URL' in os.environ:
     import dj_database_url
@@ -109,6 +114,7 @@ if 'RAILWAY_ENVIRONMENT' in os.environ or 'DATABASE_URL' in os.environ:
     CSRF_TRUSTED_ORIGINS = [
         'https://*.railway.app',
         'https://*.up.railway.app',
+        'https://alejandro-alvarez.up.railway.app',
     ]
     
     # Configuración de archivos estáticos para producción
